@@ -27,7 +27,8 @@ import javax.ws.rs.QueryParam;
  */
 @Path("PPT")
 public class PPTWS {
-    ArrayList<Partida> llistaPartides =  new ArrayList<Partida>();
+    
+    static ArrayList<Partida> llistaPartides =  new ArrayList<Partida>();
     @Context
     private UriInfo context;
 
@@ -42,9 +43,15 @@ public class PPTWS {
     CONSUMIDOR:
     http://localhost:8888/REST_PPT/webresources/PPT/iniciarJoc?c=22&j=Jugador1          POST
     http://localhost:8888/REST_PPT/webresources/PPT/iniciarJoc?c=22&j=Jugador2          POST
+    
     http://localhost:8888/REST_PPT/webresources/PPT/moureJugador?c=22&j=Jugador1&t=1    PUT
     http://localhost:8888/REST_PPT/webresources/PPT/moureJugador?c=22&j=Jugador2&t=2    PUT
     http://localhost:8888/REST_PPT/webresources/PPT/consultarEstatPartida?c=22          GET
+    
+    http://localhost:8888/REST_PPT/webresources/PPT/moureJugador?c=22&j=Jugador1&t=1    PUT
+    http://localhost:8888/REST_PPT/webresources/PPT/moureJugador?c=22&j=Jugador2&t=2    PUT
+    http://localhost:8888/REST_PPT/webresources/PPT/consultarEstatPartida?c=22          GET
+    
     http://localhost:8888/REST_PPT/webresources/PPT/acabarJoc?c=22                      DELETE
     */
 
@@ -226,10 +233,10 @@ public class PPTWS {
         
                 for(int i = 0; i < llistaPartides.size(); ++i){
             if(llistaPartides.get(i).getID() == codiPartida){
-                if(llistaPartides.get(i).getJUG1().getNick() == jug){
+                if(llistaPartides.get(i).getJUG1().getNick() == null ? jug == null : llistaPartides.get(i).getJUG1().getNick().equals(jug)){
                     llistaPartides.get(i).getJUG1().setMoviment(tipus);
                     System.out.println("El Jugador: "+jug+" ha tirat "+tipus);
-                } else if (llistaPartides.get(i).getJUG2().getNick() == jug){
+                } else if (llistaPartides.get(i).getJUG2().getNick() == null ? jug == null : llistaPartides.get(i).getJUG2().getNick().equals(jug)){
                     llistaPartides.get(i).getJUG2().setMoviment(tipus);
                     System.out.println("El Jugador: "+jug+" ha tirat "+tipus);
                 } else {
