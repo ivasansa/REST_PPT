@@ -27,7 +27,7 @@ import javax.ws.rs.QueryParam;
  */
 @Path("PPT")
 public class PPTWS {
-    ArrayList<Partida> llistaPartides = new ArrayList<Partida>();
+    ArrayList<Partida> llistaPartides =  new ArrayList<Partida>();
     @Context
     private UriInfo context;
 
@@ -35,29 +35,45 @@ public class PPTWS {
      * Creates a new instance of PPTWS
      */
     public PPTWS() {
+        
     }
+    
+    /*
+    CONSUMIDOR:
+    http://localhost:8888/REST_PPT/webresources/PPT/iniciarJoc?c=22&j=Jugador1          POST
+    http://localhost:8888/REST_PPT/webresources/PPT/iniciarJoc?c=22&j=Jugador2          POST
+    http://localhost:8888/REST_PPT/webresources/PPT/moureJugador?c=22&j=Jugador1&t=1    PUT
+    http://localhost:8888/REST_PPT/webresources/PPT/moureJugador?c=22&j=Jugador2&t=2    PUT
+    http://localhost:8888/REST_PPT/webresources/PPT/consultarEstatPartida?c=22          GET
+    http://localhost:8888/REST_PPT/webresources/PPT/acabarJoc?c=22                      DELETE
+    */
 
     /**
      * Retrieves representation of an instance of paquet.PPTWS
      * @return an instance of java.lang.String
      */
     @POST
-    @Path("iniciarJoc/")
+    @Path("/iniciarJoc/")
     @Produces("text/plain")
     public String iniciarJoc(@QueryParam("c") int codiPartida, @QueryParam("j") String jug1) {
-         
+         System.out.println("CP: "+codiPartida);
+         codiPartida = (int)codiPartida;
         boolean flag = false;
-        
         for(int i = 0; i < llistaPartides.size(); ++i){
+            System.out.println(llistaPartides.get(i).getID()+" : "+codiPartida);
             if(llistaPartides.get(i).getID() == codiPartida){
                 llistaPartides.get(i).setJUG2(jug1);
                 flag = true;
+                System.out.println("El jugador 2: "+jug1+" s'ha unit a la partida: "+codiPartida);
+                System.out.println(llistaPartides.size());
                 return "false";
             }
         }
         if(!flag){
             Partida p = new Partida(codiPartida, jug1);
             llistaPartides.add(p);
+            System.out.println("Partida Creada: "+codiPartida+" amb Jugador 1: "+jug1);
+            System.out.println(llistaPartides.size());
             return "true";
         }
         
@@ -70,7 +86,7 @@ public class PPTWS {
      * @return an instance of java.lang.String
      */
     @GET
-    @Path("consultarEstatPartida/")
+    @Path("/consultarEstatPartida/")
     @Produces("text/plain")
     public String consultarEstatPartida(@QueryParam("c") int codiPartida) {
         
@@ -190,6 +206,7 @@ public class PPTWS {
                         default:
                             throw new AssertionError();
                     }
+                    System.out.println("Estat de la Partida: "+p.getEstat());
                     return String.valueOf(p.getEstat());
                 }
             }
@@ -203,24 +220,26 @@ public class PPTWS {
      * @return an HTTP response with content of the updated or created resource.
      */
     @PUT
-    @Path("moureJugador/")
+    @Path("/moureJugador/")
     @Consumes("text/plain")
-    public void moureJugador(@QueryParam("c") int codiPartida,@QueryParam("j") String jug,@QueryParam("t") int tipus) {
+    public String moureJugador(@QueryParam("c") int codiPartida,@QueryParam("j") String jug,@QueryParam("t") int tipus) {
         
                 for(int i = 0; i < llistaPartides.size(); ++i){
             if(llistaPartides.get(i).getID() == codiPartida){
                 if(llistaPartides.get(i).getJUG1().getNick() == jug){
                     llistaPartides.get(i).getJUG1().setMoviment(tipus);
+                    System.out.println("El Jugador: "+jug+" ha tirat "+tipus);
                 } else if (llistaPartides.get(i).getJUG2().getNick() == jug){
                     llistaPartides.get(i).getJUG2().setMoviment(tipus);
+                    System.out.println("El Jugador: "+jug+" ha tirat "+tipus);
                 } else {
                     System.out.println("ErrorMoureJug");
                 }
-                //return "false";
+                return "false";
             }
         }
         
-        //return "true";
+        return "true";
         
     }
     
@@ -235,6 +254,7 @@ public class PPTWS {
         for(int i = 0; i < llistaPartides.size(); ++i){
             if(llistaPartides.get(i).getID() == codiPartida){
                 llistaPartides.remove(i);
+                System.out.println("La partida "+codiPartida+" ha estat eliminada: ");
                 return "true";
             }
         }
